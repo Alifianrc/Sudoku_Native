@@ -54,11 +54,25 @@ void Board::DrawBoard() {
 		// Margin Left
 		std::cout << "     ";
 
+		if (i % 3 == 0 && i != 0) {
+			std::cout << " #";
+			for (int j = 0; j < boardSize; j++) {
+				std::cout << "####";
+			}
+			std::cout << "\n";
+			std::cout << "     ";
+		}
+
 		// Number
 		for (int j = 0; j < boardSize; j++) {
 			
 			// Dividers between boxes
-			std::cout << " | ";
+			if (j % 3 == 0 && j != 0) {
+				std::cout << " # ";
+			}
+			else {
+				std::cout << " | ";
+			}
 			
 			// Box contain
 			if (boardData[i][j] == 0) {
@@ -85,8 +99,13 @@ void Board::DrawBoard() {
 		// Cursor
 		for (int j = 0; j < boardSize; j++) {
 
-			// Dividers
-			std::cout << "   ";
+			// Dividers between boxes
+			if (j % 3 == 0 && j != 0) {
+				std::cout << " # ";
+			}
+			else {
+				std::cout << "   ";
+			}
 
 			// The Cursor
 			if (cursorPosition[0] == i && cursorPosition[1] == j) {

@@ -13,11 +13,20 @@ private:
 	int MAX;
 	char temp[1000];
 
+	bool dataIsEmpty;
+
 	std::string questionData[5];
 	int questionSum;
 
+	std::string lastGameName;
+	std::vector<int> lastGameBoard;
+	std::vector<int> lastGameMutable;
+
+
 public:
 	GameData();
+
+	bool GetDataIsEmpty();
 
 	void LoadData();
 
@@ -27,4 +36,11 @@ public:
 
 	void LoadQuestion();
 	int GetQuestion(int questionNumber, int dataNumber);
+
+	void SetLastGameName(std::string nam);
+	void SetLastGameBoard(int value);
+	void SetLastGameMutable(int value);
+
+	void SaveData();
+	void ResetData();
 };

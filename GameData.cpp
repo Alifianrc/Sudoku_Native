@@ -3,6 +3,8 @@
 // 4210191011 Alifian
 
 GameData::GameData() {
+	dataIsEmpty = true;
+
 	data = "<Data>";
 	name = "<Name>";
 	board = "<Board>";
@@ -17,10 +19,13 @@ GameData::GameData() {
 	questionSum = 5;
 }
 
+bool GameData::GetDataIsEmpty() {
+	return dataIsEmpty;
+}
+
 void GameData::LoadData() {
 	// Open 
-	std::ifstream file;
-	file.open(fileName);
+	std::ifstream file(fileName);
 	if (!file) {
 		std::cout << "Error In Opening File!!!\n";
 		exit(0);
@@ -34,14 +39,16 @@ void GameData::LoadData() {
 
 	// Close
 	file.close();
+
+	dataIsEmpty = false;
 }
 
 std::string GameData::GetLastGameName() {
 	int findFront = 0, findBack = 0, lenght;
 	std::string dataName;
 
-	findFront = txtData.find(name, findFront + 1) + name.size();
-	findBack = txtData.find(board, findBack + 1);
+	findFront = txtData.find(name, findFront) + name.size();
+	findBack = txtData.find(board, findBack);
 	lenght = findBack - findFront;
 	dataName = txtData.substr(findFront, lenght);
 
@@ -50,15 +57,15 @@ std::string GameData::GetLastGameName() {
 int GameData::GetLastGameBoard(int dataNumber) {
 	int findFront = 0;
 
-	findFront = txtData.find(board, findFront + 1) + 10 + dataNumber;
-	int data = stoi(txtData.substr(findFront, 1));
+	findFront = txtData.find(board, findFront + 1) + board.size() + dataNumber;
+	int data = stoi(txtData.substr(findFront, 1));//
 
 	return data;
 }
 int GameData::GetLastGameMutable(int dataNumber) {
 	int findFront = 0;
 
-	findFront = txtData.find(mutan, findFront + 1) + 10 + dataNumber;
+	findFront = txtData.find(mutan, findFront + 1) + mutan.size() + dataNumber;
 	int data = stoi(txtData.substr(findFront, 1));
 
 	return data;
@@ -79,3 +86,49 @@ int GameData::GetQuestion(int questionNumber, int dataNumber) {
 	return data;
 }
 
+void GameData::SetLastGameName(std::string nam) {
+	lastGameName = nam;
+}
+void GameData::SetLastGameBoard(int value) {
+	lastGameBoard.push_back(value);
+}
+void GameData::SetLastGameMutable(int value) {
+	lastGameMutable.push_back(value);
+}
+
+void GameData::SaveData() {
+	// Open
+	std::ofstream file(fileName);
+
+	file << data << std::endl;
+
+	file << name << lastGameName;
+	file << board;
+	for (int i = 0; i < lastGameBoard.size(); i++) {
+		file << std::to_string(lastGameBoard[i]);
+	}
+	file << mutan;
+	for (int i = 0; i < lastGameMutable.size(); i++) {
+		file << std::to_string(lastGameMutable[i]);
+	}
+	file << std::endl;
+
+	for (int i = 0; i < questionSum; i++) {
+		file << question << questionData[i] << endQuestion << std::endl;
+	}
+
+	file << close;
+
+	file.close();
+
+	ResetData();
+}
+void GameData::ResetData() {
+	txtData = "";
+
+	lastGameName = "";
+	lastGameBoard.clear();
+	lastGameMutable.clear();
+
+	dataIsEmpty = true;
+}

@@ -42,6 +42,7 @@ public:
 	bool CheckBoardRow();
 	bool CheckBoardEach3x3();
 
+	void GamePause();
 	void GameOver();
 
 	void Play();

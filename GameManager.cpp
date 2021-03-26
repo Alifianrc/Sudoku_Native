@@ -11,6 +11,7 @@ GameSudoku::GameSudoku() {
 	menuValue = 0;
 
 	data.LoadData();
+	data.LoadQuestion();
 
 	DrawMenu(menuValue);
 }
@@ -56,13 +57,16 @@ void GameSudoku::MainMenu() {
 		DrawMenu(menuValue);
 		break;
 	case '\r':
+
 		switch (menuValue)
 		{
 		case 0:
 			ResumeGame();
+			menuValue = 0;
 			break;
 		case 1:
 			NewGame();
+			menuValue = 0;
 			break;
 		case 2:
 			system("cls");
@@ -121,8 +125,6 @@ bool GameSudoku::GetLastGameData() {
 	}
 }
 void GameSudoku::GetNewQuestionData() {
-	data.LoadQuestion();
-
 	srand(time(0));
 	int questNum = rand() % 5;
 	int count = 0;
@@ -146,6 +148,10 @@ void GameSudoku::GetNewQuestionData() {
 }
 
 void GameSudoku::ResumeGame() {
+	if (data.GetDataIsEmpty() == true) {
+		data.LoadData();
+	}
+
 	if (GetLastGameData() != false) {
 		menuLoop = false;
 		gameLoop = true;
@@ -157,6 +163,10 @@ void GameSudoku::ResumeGame() {
 	}
 }
 void GameSudoku::NewGame() {
+	if (data.GetDataIsEmpty() == true) {
+		data.LoadData();
+	}
+
 	GetPlayerInputName();
 
 	GetNewQuestionData();
@@ -186,7 +196,7 @@ void GameSudoku::GameManager() {
 		}
 	}
 	else if (gameIsOver == true) {
-
+		GameOver();
 	}
 }
 bool GameSudoku::GameInput() {
@@ -225,6 +235,9 @@ bool GameSudoku::GameInput() {
 			board.SetCursorPosition(1, cursor1Position);
 		}
 		wasUpdated = true;
+		break;
+	case 'p':
+		GamePause();
 		break;
 	default:
 		if (isdigit(input) && board.GetMutableBoard(cursor0Position,cursor1Position) == true) {
@@ -289,8 +302,51 @@ bool GameSudoku::CheckBoardEach3x3() {
 	return true;
 }
 
-void GameSudoku::GameOver() {
+void GameSudoku::GamePause() {
+	data.SetLastGameName(player.GetName());
+	for (int i = 0; i < board.GetBoardSize(); i++) {
+		for (int j = 0; j < board.GetBoardSize(); j++) {
+			data.SetLastGameBoard(board.GetBoardData(i, j));
 
+			if (board.GetMutableBoard(i, j) == true) {
+				data.SetLastGameMutable(1); // mutable
+			}
+			else {
+				data.SetLastGameMutable(0); // immutable
+			}
+		}
+	}
+
+	data.SaveData();
+
+	board.ResetBoardData();
+	board.ResetCursorPosition();
+
+	menuLoop = true;
+	gameLoop = false;
+
+	DrawMenu(menuValue);
+}
+void GameSudoku::GameOver() {
+	data.SetLastGameName("null");
+	for (int i = 0; i < board.GetBoardSize(); i++) {
+		for (int j = 0; j < board.GetBoardSize(); j++) {
+			data.SetLastGameBoard(0);
+			data.SetLastGameMutable(0);
+		}
+	}
+
+	data.SaveData();
+
+	board.ResetBoardData();
+	board.ResetCursorPosition();
+
+	menuLoop = true;
+	gameLoop = false;
+
+	// Pause the screen
+	system("pause");
+	DrawMenu(menuValue);
 }
 
 void GameSudoku::Play() {

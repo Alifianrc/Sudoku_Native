@@ -1,4 +1,6 @@
 #include <iostream>
+#include <conio.h> 
+#include <stdlib.h>
 
 // 4210191011 Alifian
 
