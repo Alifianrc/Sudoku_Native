@@ -236,18 +236,55 @@ bool GameSudoku::GameInput() {
 		}
 		wasUpdated = true;
 		break;
+	case 'z':
+		wasUpdated = UndoMovement();;
+		break;
+	case 'y':
+		wasUpdated = RedoMovement();
+		break;
 	case 'p':
 		GamePause();
 		break;
 	default:
 		if (isdigit(input) && board.GetMutableBoard(cursor0Position,cursor1Position) == true) {
-			board.SetBoardData(cursor0Position, cursor1Position, (int)input - 48); //  In ASCII code, the numbers (digits) start from 48
-			wasUpdated = true;
+			// In ASCII code, the numbers (digits) start from 48
+			action.PushUndoData(cursor0Position, cursor1Position, board.GetBoardData(cursor0Position,cursor1Position)); 
+			action.ResetRedoData();
+
+			board.SetBoardData(cursor0Position, cursor1Position, (int)input - 48); 
+			wasUpdated = true;			
 		}
 		break;
 	}
 
 	return wasUpdated;
+}
+
+bool GameSudoku::UndoMovement() {
+	int x, y, value;
+	if (action.PopUndoData(&x, &y, &value) == true) {
+		action.PushRedoData(x, y, board.GetBoardData(x, y));
+
+		board.SetBoardData(x, y, value);
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+bool GameSudoku::RedoMovement() {
+	int x, y, value;
+	if (action.PopRedoData(&x, &y, &value) == true) {
+		action.PushUndoData(x, y, board.GetBoardData(x, y));
+
+		board.SetBoardData(x, y, value);
+
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 bool GameSudoku::CheckBoardColumn() {

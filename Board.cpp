@@ -47,6 +47,9 @@ void Board::ResetCursorPosition() {
 void Board::DrawBoard() {
 	system("cls");
 	
+	// Title
+	std::cout << "\n                      SUDOKU";
+
 	// Margin Top
 	std::cout << "\n\n";
 
@@ -88,6 +91,12 @@ void Board::DrawBoard() {
 		// For User Interface ( right side of the screen )
 		if (i == 1) {
 			std::cout << "           Press p to exit";
+		}
+		else if (i == 3) {
+			std::cout << "           Press z to undo";
+		}
+		else if (i == 5) {
+			std::cout << "           Press y to redo";
 		}
 
 		// Next Line
