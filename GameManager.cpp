@@ -358,6 +358,8 @@ void GameSudoku::GamePause() {
 
 	board.ResetBoardData();
 	board.ResetCursorPosition();
+	action.ResetUndoData();
+	action.ResetRedoData();
 
 	menuLoop = true;
 	gameLoop = false;
@@ -377,6 +379,8 @@ void GameSudoku::GameOver() {
 
 	board.ResetBoardData();
 	board.ResetCursorPosition();
+	action.ResetUndoData();
+	action.ResetRedoData();
 
 	menuLoop = true;
 	gameLoop = false;
