@@ -1,6 +1,6 @@
 #include "Board.h"
 
-// 4210191011 Alifian
+// 4210191024 Andhika Arista
 
 Board::Board() {
 	boardSize = 9;
@@ -16,7 +16,14 @@ int Board::GetBoardData(int x, int y) {
 	return boardData[x][y];
 }
 void Board::SetBoardData(int x, int y, int value) {
-	boardData[x][y] = value;
+	if (boardData[x][y] != value) {
+		if (mutableBoard[x][y] == true) {
+			PushUndoData(x, y, boardData[x][y]);
+			ResetRedoData();
+		}		
+
+		boardData[x][y] = value;
+	}
 }
 void Board::ResetBoardData() {
 	for (int i = 0; i < boardSize; i++) {
@@ -127,5 +134,117 @@ void Board::DrawBoard() {
 
 		// Next Line
 		std::cout << std::endl;
+	}
+}
+
+bool Board::CheckBoardColumn() {
+	// Column
+	for (int i = 0; i < boardSize; i++) {
+		for (int j = 0; j < boardSize - 1; j++) {
+			for (int k = j + 1; k < boardSize; k++) {
+				if (boardData[i][j] == boardData[i][k]) {
+					return false;
+				}
+			}
+		}
+	}
+}
+bool Board::CheckBoardRow() {
+	// Row
+	for (int i = 0; i < boardSize; i++) {
+		for (int j = 0; j < boardSize - 1; j++) {
+			for (int k = j + 1; k < boardSize; k++) {
+				if (boardData[j][i] == boardData[k][i]) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+bool Board::CheckBoardEach3x3() {
+	// Each 3x3
+	for (int i = 0; i < boardSize; i += 3) {
+		for (int j = 0; j < boardSize; j += 3) {
+			for (int k = i; k < i + 3; k++) {
+				for (int l = j; l < i + 3; l++) {
+					for (int m = k; m < i + 3; m++) {
+						for (int n = l; n < i + 3; n++) {
+							if (k == m && l == n) {
+								n++;
+							}
+							else {
+								if (boardData[k][l] == boardData[m][n]) {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+
+void Board::PushUndoData(int i, int j, int val) {
+	TheData temp;
+	temp.x = i;
+	temp.y = j;
+	temp.value = val;
+
+	undo.push(temp);
+}
+void Board::PushRedoData(int i, int j, int val) {
+	TheData temp;
+	temp.x = i;
+	temp.y = j;
+	temp.value = val;
+
+	redo.push(temp);
+}
+
+bool Board::PopUndoData() {
+	if (undo.empty() == false) {
+		TheData temp = undo.top();
+		undo.pop();
+
+		PushRedoData(temp.x, temp.y, boardData[temp.x][temp.y]);
+
+		boardData[temp.x][temp.y] = temp.value;
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+bool Board::PopRedoData() {
+	if (redo.empty() == false) {
+		TheData temp = redo.top();
+		redo.pop();
+
+		PushUndoData(temp.x, temp.y, boardData[temp.x][temp.y]);
+
+		boardData[temp.x][temp.y] = temp.value;
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void Board::ResetUndoData() {
+	while (!undo.empty()) {
+		undo.pop();
+	}
+}
+void Board::ResetRedoData() {
+	while (!redo.empty()) {
+		redo.pop();
 	}
 }

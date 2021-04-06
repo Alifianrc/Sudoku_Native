@@ -3,7 +3,6 @@
 #include "Player.h"
 #include "Board.h"
 #include "GameData.h"
-#include "UndoRedo.h"
 
 // 4210191011 Alifian
 
@@ -12,7 +11,6 @@ private:
 	Player player;
 	Board board;
 	GameData data;
-	UndoRedo action;
 
 	bool mainLoop;
 	bool menuLoop;
@@ -36,13 +34,6 @@ private:
 
 	void GameManager();
 	bool GameInput();
-
-	bool UndoMovement();
-	bool RedoMovement();
-
-	bool CheckBoardColumn();
-	bool CheckBoardRow();
-	bool CheckBoardEach3x3();
 
 	void GamePause();
 	void GameOver();

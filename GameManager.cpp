@@ -183,12 +183,12 @@ void GameSudoku::GameManager() {
 	if (wasUpdated && !gameIsOver) {
 		board.DrawBoard();
 		
-		bool isCorrect = CheckBoardColumn();
+		bool isCorrect = board.CheckBoardColumn();
 		if (isCorrect == true) {
-			isCorrect = CheckBoardRow();
+			isCorrect = board.CheckBoardRow();
 		}
 		if (isCorrect == true) {
-			isCorrect = CheckBoardEach3x3();
+			isCorrect = board.CheckBoardEach3x3();
 		}
 
 		if (isCorrect == true) {
@@ -237,20 +237,16 @@ bool GameSudoku::GameInput() {
 		wasUpdated = true;
 		break;
 	case 'z':
-		wasUpdated = UndoMovement();;
+		wasUpdated = board.PopUndoData();
 		break;
 	case 'y':
-		wasUpdated = RedoMovement();
+		wasUpdated = board.PopRedoData();
 		break;
 	case 'p':
 		GamePause();
 		break;
 	default:
 		if (isdigit(input) && board.GetMutableBoard(cursor0Position,cursor1Position) == true) {
-			// In ASCII code, the numbers (digits) start from 48
-			action.PushUndoData(cursor0Position, cursor1Position, board.GetBoardData(cursor0Position,cursor1Position)); 
-			action.ResetRedoData();
-
 			board.SetBoardData(cursor0Position, cursor1Position, (int)input - 48); 
 			wasUpdated = true;			
 		}
@@ -258,85 +254,6 @@ bool GameSudoku::GameInput() {
 	}
 
 	return wasUpdated;
-}
-
-bool GameSudoku::UndoMovement() {
-	int x, y, value;
-	if (action.PopUndoData(&x, &y, &value) == true) {
-		action.PushRedoData(x, y, board.GetBoardData(x, y));
-
-		board.SetBoardData(x, y, value);
-
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-bool GameSudoku::RedoMovement() {
-	int x, y, value;
-	if (action.PopRedoData(&x, &y, &value) == true) {
-		action.PushUndoData(x, y, board.GetBoardData(x, y));
-
-		board.SetBoardData(x, y, value);
-
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool GameSudoku::CheckBoardColumn() {
-	// Column
-	for (int i = 0; i < board.GetBoardSize(); i++) {
-		for (int j = 0; j < board.GetBoardSize() - 1; j++) {
-			for (int k = j + 1; k < board.GetBoardSize(); k++) {
-				if (board.GetBoardData(i, j) == board.GetBoardData(i, k)) {
-					return false;
-				}
-			}
-		}
-	}
-}
-bool GameSudoku::CheckBoardRow() {
-	// Row
-	for (int i = 0; i < board.GetBoardSize(); i++) {
-		for (int j = 0; j < board.GetBoardSize() - 1; j++) {
-			for (int k = j + 1; k < board.GetBoardSize(); k++) {
-				if (board.GetBoardData(j, i) == board.GetBoardData(k, i)) {
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
-}
-bool GameSudoku::CheckBoardEach3x3() {
-	// Each 3x3
-	for (int i = 0; i < board.GetBoardSize(); i += 3) {
-		for (int j = 0; j < board.GetBoardSize(); j += 3) {
-			for (int k = i; k < i + 3; k++) {
-				for (int l = j; l < i + 3; l++) {
-					for (int m = k; m < i + 3; m++) {
-						for (int n = l; n < i + 3; n++) {
-							if (k == m && l == n) {
-								n++;
-							}
-							else {
-								if (board.GetBoardData(k, l) == board.GetBoardData(m, n)) {
-									return false;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return true;
 }
 
 void GameSudoku::GamePause() {
@@ -358,8 +275,8 @@ void GameSudoku::GamePause() {
 
 	board.ResetBoardData();
 	board.ResetCursorPosition();
-	action.ResetUndoData();
-	action.ResetRedoData();
+	board.ResetUndoData();
+	board.ResetRedoData();
 
 	menuLoop = true;
 	gameLoop = false;
@@ -379,8 +296,8 @@ void GameSudoku::GameOver() {
 
 	board.ResetBoardData();
 	board.ResetCursorPosition();
-	action.ResetUndoData();
-	action.ResetRedoData();
+	board.ResetUndoData();
+	board.ResetRedoData();
 
 	menuLoop = true;
 	gameLoop = false;
