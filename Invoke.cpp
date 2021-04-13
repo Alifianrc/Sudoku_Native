@@ -57,7 +57,7 @@ void Invoker::ResetUndo() {
 	}
 }
 Command* Invoker::GetUndo() {
-	return commands.top();
+	return undos.top();
 }
 bool Invoker::isUndoEmpty() {
 	if (undos.empty() == true) {

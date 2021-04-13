@@ -13,6 +13,11 @@ private:
 	bool mutableBoard[10][10]; // mutable = true = 1, immutable = false = 0
 	int cursorPosition[2];
 
+	int commandStack[100];
+	int commandP;
+	int undoStack[100];
+	int undoP;
+
 public:
 	Board();
 
@@ -34,4 +39,25 @@ public:
 	bool CheckBoardColumn();
 	bool CheckBoardRow();
 	bool CheckBoardEach3x3();
+
+	// Debugging
+	void PushCommandStack(int value) {
+		commandStack[commandP] = value;
+		commandP++;
+	}
+	void PopCommandStack() {
+		commandStack[commandP] = 0;
+		commandP--;
+	}
+	void PushUndoStack(int value) {
+		undoStack[undoP] = value;
+		undoP++;
+	}
+	void PopUndoStack() {
+		undoStack[undoP] = 0;
+		undoP--;
+	}
+	void ResetUndoStack() {
+		undoP = 0;
+	}
 };
