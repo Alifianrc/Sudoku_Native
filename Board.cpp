@@ -16,14 +16,7 @@ int Board::GetBoardData(int x, int y) {
 	return boardData[x][y];
 }
 void Board::SetBoardData(int x, int y, int value) {
-	if (boardData[x][y] != value) {
-		if (mutableBoard[x][y] == true) {
-			PushUndoData(x, y, boardData[x][y]);
-			ResetRedoData();
-		}		
-
-		boardData[x][y] = value;
-	}
+	boardData[x][y] = value;
 }
 void Board::ResetBoardData() {
 	for (int i = 0; i < boardSize; i++) {
@@ -189,62 +182,3 @@ bool Board::CheckBoardEach3x3() {
 	return true;
 }
 
-
-void Board::PushUndoData(int i, int j, int val) {
-	TheData temp;
-	temp.x = i;
-	temp.y = j;
-	temp.value = val;
-
-	undo.push(temp);
-}
-void Board::PushRedoData(int i, int j, int val) {
-	TheData temp;
-	temp.x = i;
-	temp.y = j;
-	temp.value = val;
-
-	redo.push(temp);
-}
-
-bool Board::PopUndoData() {
-	if (undo.empty() == false) {
-		TheData temp = undo.top();
-		undo.pop();
-
-		PushRedoData(temp.x, temp.y, boardData[temp.x][temp.y]);
-
-		boardData[temp.x][temp.y] = temp.value;
-
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-bool Board::PopRedoData() {
-	if (redo.empty() == false) {
-		TheData temp = redo.top();
-		redo.pop();
-
-		PushUndoData(temp.x, temp.y, boardData[temp.x][temp.y]);
-
-		boardData[temp.x][temp.y] = temp.value;
-
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-void Board::ResetUndoData() {
-	while (!undo.empty()) {
-		undo.pop();
-	}
-}
-void Board::ResetRedoData() {
-	while (!redo.empty()) {
-		redo.pop();
-	}
-}

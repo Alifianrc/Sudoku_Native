@@ -1,16 +1,20 @@
+#pragma once
 #include <time.h>
 #include <conio.h>
 #include "Player.h"
 #include "Board.h"
 #include "GameData.h"
+#include "Invoke.h"
+#include "FillCell.h"
 
 // 4210191011 Alifian
 
 class GameSudoku {
 private:
-	Player player;
-	Board board;
 	GameData data;
+	Player* player;
+	Board* board;
+	Invoker* invoker;
 
 	bool mainLoop;
 	bool menuLoop;
@@ -34,6 +38,9 @@ private:
 
 	void GameManager();
 	bool GameInput();
+	void FillBoard(int i, int j, int value);
+	bool Undo();
+	bool Redo();
 
 	void GamePause();
 	void GameOver();

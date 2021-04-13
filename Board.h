@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <conio.h> 
 #include <stdlib.h>
@@ -12,12 +13,6 @@ private:
 	bool mutableBoard[10][10]; // mutable = true = 1, immutable = false = 0
 	int cursorPosition[2];
 
-	struct TheData {
-		int x, y, value;
-	};
-
-	std::stack<TheData> undo;
-	std::stack<TheData> redo;
 public:
 	Board();
 
@@ -39,13 +34,4 @@ public:
 	bool CheckBoardColumn();
 	bool CheckBoardRow();
 	bool CheckBoardEach3x3();
-
-	void PushUndoData(int i, int j, int val);
-	void PushRedoData(int i, int j, int val);
-
-	bool PopUndoData();
-	bool PopRedoData();
-
-	void ResetUndoData();
-	void ResetRedoData();
 };

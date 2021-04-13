@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 // 4210191024 Andhika

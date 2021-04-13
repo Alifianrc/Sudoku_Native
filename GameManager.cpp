@@ -3,6 +3,10 @@
 // 4210191011 Alifian
 
 GameSudoku::GameSudoku() {
+	player = new Player();
+	board = new Board();
+	invoker = new Invoker();
+
 	mainLoop = true;
 	menuLoop = true;
 	gameLoop = false;
@@ -34,7 +38,7 @@ void GameSudoku::GetPlayerInputName() {
 	std::cout << "\n   Input Player Name\n";
 	std::cout << "   Name : "; std::cin >> name;
 	
-	player.SetPlayerName(name);
+	player->SetPlayerName(name);
 }
 
 void GameSudoku::MainMenu() {
@@ -104,18 +108,18 @@ void GameSudoku::DrawMenu(int value) {
 }
 
 bool GameSudoku::GetLastGameData() {
-	player.SetPlayerName(data.GetLastGameName());
+	player->SetPlayerName(data.GetLastGameName());
 	if (data.GetLastGameName() == "null") {
 		return false;
 	}
 	else {
 		int count = 0;
-		for (int i = 0; i < board.GetBoardSize(); i++) {
-			for (int j = 0; j < board.GetBoardSize(); j++) {
+		for (int i = 0; i < board->GetBoardSize(); i++) {
+			for (int j = 0; j < board->GetBoardSize(); j++) {
 
-				board.SetBoardData(i, j, data.GetLastGameBoard(count));
+				board->SetBoardData(i, j, data.GetLastGameBoard(count));
 
-				board.SetMutableBoard(i, j, data.GetLastGameMutable(count));
+				board->SetMutableBoard(i, j, data.GetLastGameMutable(count));
 
 				count++;
 			}
@@ -129,17 +133,17 @@ void GameSudoku::GetNewQuestionData() {
 	int questNum = rand() % 5;
 	int count = 0;
 
-	for (int i = 0; i < board.GetBoardSize(); i++) {
-		for (int j = 0; j < board.GetBoardSize(); j++) {
+	for (int i = 0; i < board->GetBoardSize(); i++) {
+		for (int j = 0; j < board->GetBoardSize(); j++) {
 			int dataValue = data.GetQuestion(questNum, count);
 
-			board.SetBoardData(i, j, dataValue);
+			board->SetBoardData(i, j, dataValue);
 
 			if (dataValue != 0) {
-				board.SetMutableBoard(i, j, false); // Immutable
+				board->SetMutableBoard(i, j, false); // Immutable
 			}
 			else {
-				board.SetMutableBoard(i, j, true); // Mutable
+				board->SetMutableBoard(i, j, true); // Mutable
 			}
 
 			count++;
@@ -156,7 +160,7 @@ void GameSudoku::ResumeGame() {
 		menuLoop = false;
 		gameLoop = true;
 
-		board.DrawBoard();
+		board->DrawBoard();
 	}
 	else {
 		std::cout << "\n\n No Resume Data \n\n";
@@ -174,21 +178,21 @@ void GameSudoku::NewGame() {
 	menuLoop = false;
 	gameLoop = true;
 
-	board.DrawBoard();
+	board->DrawBoard();
 }
 
 void GameSudoku::GameManager() {
 	bool wasUpdated = GameInput();
 
 	if (wasUpdated && !gameIsOver) {
-		board.DrawBoard();
+		board->DrawBoard();
 		
-		bool isCorrect = board.CheckBoardColumn();
+		bool isCorrect = board->CheckBoardColumn();
 		if (isCorrect == true) {
-			isCorrect = board.CheckBoardRow();
+			isCorrect = board->CheckBoardRow();
 		}
 		if (isCorrect == true) {
-			isCorrect = board.CheckBoardEach3x3();
+			isCorrect = board->CheckBoardEach3x3();
 		}
 
 		if (isCorrect == true) {
@@ -203,51 +207,51 @@ bool GameSudoku::GameInput() {
 	bool wasUpdated = false;
 	char input = GetUserInput();
 
-	int cursor0Position = board.GetCursorPosition(0);
-	int cursor1Position = board.GetCursorPosition(1);
+	int cursor0Position = board->GetCursorPosition(0);
+	int cursor1Position = board->GetCursorPosition(1);
 
 	switch (input)
 	{
 	case 'w':
 		if (cursor0Position != 0) {
 			cursor0Position--;
-			board.SetCursorPosition(0, cursor0Position);
+			board->SetCursorPosition(0, cursor0Position);
 		}
 		wasUpdated = true;
 		break;
 	case 's':
-		if (cursor0Position != board.GetBoardSize() - 1) {
+		if (cursor0Position != board->GetBoardSize() - 1) {
 			cursor0Position++;
-			board.SetCursorPosition(0, cursor0Position);
+			board->SetCursorPosition(0, cursor0Position);
 		}
 		wasUpdated = true;
 		break;
 	case 'a':
 		if (cursor1Position != 0) {
 			cursor1Position--;
-			board.SetCursorPosition(1, cursor1Position);
+			board->SetCursorPosition(1, cursor1Position);
 		}
 		wasUpdated = true;
 		break;
 	case 'd':
-		if (cursor1Position != board.GetBoardSize() - 1) {
+		if (cursor1Position != board->GetBoardSize() - 1) {
 			cursor1Position++;
-			board.SetCursorPosition(1, cursor1Position);
+			board->SetCursorPosition(1, cursor1Position);
 		}
 		wasUpdated = true;
 		break;
 	case 'z':
-		wasUpdated = board.PopUndoData();
+		wasUpdated = Undo();
 		break;
 	case 'y':
-		wasUpdated = board.PopRedoData();
+		wasUpdated = Redo();
 		break;
 	case 'p':
 		GamePause();
 		break;
 	default:
-		if (isdigit(input) && board.GetMutableBoard(cursor0Position,cursor1Position) == true) {
-			board.SetBoardData(cursor0Position, cursor1Position, (int)input - 48); 
+		if (isdigit(input) && board->GetMutableBoard(cursor0Position,cursor1Position) == true) {
+			FillBoard(cursor0Position, cursor1Position, (int)input - 48);
 			wasUpdated = true;			
 		}
 		break;
@@ -255,14 +259,52 @@ bool GameSudoku::GameInput() {
 
 	return wasUpdated;
 }
+void GameSudoku::FillBoard(int i, int j, int value) {
+	FillCell* command = new FillCell(*board, i, j, value);
+	command->Execute();
+
+	invoker->PushCommand(*command);
+	
+	invoker->ResetUndo();
+}
+bool GameSudoku::Undo() {
+	if (invoker->isCommandEmpty() == false) {
+		Command* command = invoker->GetCommand();
+		command->Undo();
+
+		invoker->PushUndo(*command);
+
+		invoker->PopCommand();
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+bool GameSudoku::Redo() {
+	if (invoker->isUndoEmpty() == false) {
+		Command* command = invoker->GetUndo();
+		command->Redo();
+
+		invoker->PushCommand(*command);
+
+		invoker->PopUndo();
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
 void GameSudoku::GamePause() {
-	data.SetLastGameName(player.GetName());
-	for (int i = 0; i < board.GetBoardSize(); i++) {
-		for (int j = 0; j < board.GetBoardSize(); j++) {
-			data.SetLastGameBoard(board.GetBoardData(i, j));
+	data.SetLastGameName(player->GetName());
+	for (int i = 0; i < board->GetBoardSize(); i++) {
+		for (int j = 0; j < board->GetBoardSize(); j++) {
+			data.SetLastGameBoard(board->GetBoardData(i, j));
 
-			if (board.GetMutableBoard(i, j) == true) {
+			if (board->GetMutableBoard(i, j) == true) {
 				data.SetLastGameMutable(1); // mutable
 			}
 			else {
@@ -273,10 +315,10 @@ void GameSudoku::GamePause() {
 
 	data.SaveData();
 
-	board.ResetBoardData();
-	board.ResetCursorPosition();
-	board.ResetUndoData();
-	board.ResetRedoData();
+	board->ResetBoardData();
+	board->ResetCursorPosition();
+	invoker->ResetCommand();
+	invoker->ResetUndo();
 
 	menuLoop = true;
 	gameLoop = false;
@@ -285,8 +327,8 @@ void GameSudoku::GamePause() {
 }
 void GameSudoku::GameOver() {
 	data.SetLastGameName("null");
-	for (int i = 0; i < board.GetBoardSize(); i++) {
-		for (int j = 0; j < board.GetBoardSize(); j++) {
+	for (int i = 0; i < board->GetBoardSize(); i++) {
+		for (int j = 0; j < board->GetBoardSize(); j++) {
 			data.SetLastGameBoard(0);
 			data.SetLastGameMutable(0);
 		}
@@ -294,10 +336,10 @@ void GameSudoku::GameOver() {
 
 	data.SaveData();
 
-	board.ResetBoardData();
-	board.ResetCursorPosition();
-	board.ResetUndoData();
-	board.ResetRedoData();
+	board->ResetBoardData();
+	board->ResetCursorPosition();
+	invoker->ResetCommand();
+	invoker->ResetUndo();
 
 	menuLoop = true;
 	gameLoop = false;
