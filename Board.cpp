@@ -112,7 +112,7 @@ void Board::DrawBoard() {
 		for (int j = 0; j < boardSize; j++) {
 
 			// Dividers between boxes
-			if (j % 3 == 0 && j != 0) {
+			if (j % 3 == 0 && j != 0 && i != boardSize - 1) {
 				std::cout << " # ";
 			}
 			else {
@@ -133,11 +133,11 @@ void Board::DrawBoard() {
 	}
 
 	// Debugging
-	std::cout << commandP << std::endl;
+	std::cout << "     " << commandP << std::endl << "     ";
 	for (int i = 0; i < commandP; i++) {
 		std::cout << commandStack[i] << " ";
 	} std::cout << std::endl;
-	std::cout << undoP << std::endl;
+	std::cout << "     " << undoP << std::endl << "     ";
 	for (int i = 0; i < undoP; i++) {
 		std::cout << undoStack[i] << " ";
 	} std::cout << std::endl;

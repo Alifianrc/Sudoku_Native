@@ -9,6 +9,11 @@
 
 // 4210191011 Alifian
 
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+
 class GameSudoku {
 private:
 	GameData data;

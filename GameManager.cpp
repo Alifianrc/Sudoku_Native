@@ -21,12 +21,12 @@ GameSudoku::GameSudoku() {
 }
 
 char GameSudoku::GetUserInput() {
-	char theInput = 'x';
+	char theInput;
 	if (_kbhit()) {
 		theInput = _getch();
 	}
 	else {
-		theInput = 'x';
+		theInput = NULL;
 	}
 	return theInput;
 }
@@ -46,6 +46,7 @@ void GameSudoku::MainMenu() {
 
 	switch (menuInput)
 	{
+	case KEY_UP:
 	case 'w':
 		menuValue--;
 		if (menuValue < 0) {
@@ -53,6 +54,7 @@ void GameSudoku::MainMenu() {
 		}
 		DrawMenu(menuValue);
 		break;
+	case KEY_DOWN:
 	case 's':
 		menuValue++;
 		if (menuValue > 2) {
@@ -212,6 +214,7 @@ bool GameSudoku::GameInput() {
 
 	switch (input)
 	{
+	case KEY_UP:
 	case 'w':
 		if (cursor0Position != 0) {
 			cursor0Position--;
@@ -219,6 +222,7 @@ bool GameSudoku::GameInput() {
 		}
 		wasUpdated = true;
 		break;
+	case KEY_DOWN:
 	case 's':
 		if (cursor0Position != board->GetBoardSize() - 1) {
 			cursor0Position++;
@@ -226,6 +230,7 @@ bool GameSudoku::GameInput() {
 		}
 		wasUpdated = true;
 		break;
+	case KEY_LEFT:
 	case 'a':
 		if (cursor1Position != 0) {
 			cursor1Position--;
@@ -233,6 +238,7 @@ bool GameSudoku::GameInput() {
 		}
 		wasUpdated = true;
 		break;
+	case KEY_RIGHT:
 	case 'd':
 		if (cursor1Position != board->GetBoardSize() - 1) {
 			cursor1Position++;
@@ -250,9 +256,11 @@ bool GameSudoku::GameInput() {
 		GamePause();
 		break;
 	default:
-		if (isdigit(input) && board->GetMutableBoard(cursor0Position,cursor1Position) == true) {
-			FillBoard(cursor0Position, cursor1Position, (int)input - 48);
-			wasUpdated = true;			
+		if (input >= 48 && input <= 57) {
+			if (board->GetMutableBoard(cursor0Position, cursor1Position) == true && board->GetBoardData(cursor0Position, cursor1Position) != (int)input - 48) {
+				FillBoard(cursor0Position, cursor1Position, (int)input - 48);
+				wasUpdated = true;
+			}
 		}
 		break;
 	}
