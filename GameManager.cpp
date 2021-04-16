@@ -273,7 +273,7 @@ void GameSudoku::FillBoard(int i, int j, int value) {
 
 	invoker->PushCommand(*command);
 	
-	invoker->ResetUndo(); board->ResetUndoStack();
+	invoker->ResetUndo();
 }
 bool GameSudoku::Undo() {
 	if (invoker->isCommandEmpty() == false) {
@@ -282,7 +282,7 @@ bool GameSudoku::Undo() {
 
 		invoker->PushUndo(*command); 
 
-		invoker->PopCommand(); board->PopCommandStack();
+		invoker->PopCommand();
 
 		return true;
 	}
@@ -297,7 +297,7 @@ bool GameSudoku::Redo() {
 
 		invoker->PushCommand(*command);
 
-		invoker->PopUndo(); board->PopUndoStack();
+		invoker->PopUndo();
 
 		return true;
 	}

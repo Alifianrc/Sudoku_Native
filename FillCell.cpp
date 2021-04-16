@@ -10,12 +10,12 @@ FillCell::FillCell(Board& board, int a, int b, int val) {
 }
 
 void FillCell::Execute() {
-	undoValue = theBoard->GetBoardData(i, j); theBoard->PushCommandStack(undoValue);
+	undoValue = theBoard->GetBoardData(i, j);
 	theBoard->SetBoardData(i, j, value);
 }
 void FillCell::Undo() {
-	theBoard->SetBoardData(i, j, undoValue); theBoard->PushUndoStack(value);
+	theBoard->SetBoardData(i, j, undoValue);
 }
 void FillCell::Redo() {
-	theBoard->SetBoardData(i, j, value); theBoard->PushCommandStack(undoValue);
+	theBoard->SetBoardData(i, j, value);
 }

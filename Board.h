@@ -39,25 +39,4 @@ public:
 	bool CheckBoardColumn();
 	bool CheckBoardRow();
 	bool CheckBoardEach3x3();
-
-	// Debugging
-	void PushCommandStack(int value) {
-		commandStack[commandP] = value;
-		commandP++;
-	}
-	void PopCommandStack() {
-		commandStack[commandP] = 0;
-		commandP--;
-	}
-	void PushUndoStack(int value) {
-		undoStack[undoP] = value;
-		undoP++;
-	}
-	void PopUndoStack() {
-		undoStack[undoP] = 0;
-		undoP--;
-	}
-	void ResetUndoStack() {
-		undoP = 0;
-	}
 };

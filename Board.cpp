@@ -195,3 +195,5 @@ bool Board::CheckBoardEach3x3() {
 	return true;
 }
 
+
+
