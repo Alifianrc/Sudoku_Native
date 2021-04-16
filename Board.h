@@ -13,11 +13,6 @@ private:
 	bool mutableBoard[10][10]; // mutable = true = 1, immutable = false = 0
 	int cursorPosition[2];
 
-	int commandStack[100];
-	int commandP;
-	int undoStack[100];
-	int undoP;
-
 public:
 	Board();
 

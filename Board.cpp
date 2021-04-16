@@ -6,9 +6,6 @@ Board::Board() {
 	boardSize = 9;
 	ResetBoardData();
 	ResetCursorPosition();
-
-	commandP = 0;
-	undoP = 0;
 }
 
 int Board::GetBoardSize() {
@@ -131,16 +128,6 @@ void Board::DrawBoard() {
 		// Next Line
 		std::cout << std::endl;
 	}
-
-	// Debugging
-	std::cout << "     " << commandP << std::endl << "     ";
-	for (int i = 0; i < commandP; i++) {
-		std::cout << commandStack[i] << " ";
-	} std::cout << std::endl;
-	std::cout << "     " << undoP << std::endl << "     ";
-	for (int i = 0; i < undoP; i++) {
-		std::cout << undoStack[i] << " ";
-	} std::cout << std::endl;
 }
 
 bool Board::CheckBoardColumn() {
